@@ -1,6 +1,6 @@
 # 粤语播客生态研究
 
-**[→ 在线展示页](https://kevinsssss-boop.github.io/yu-yue-podcast-research/)**
+**[→ 项目展示页](https://kevinsssss-boop.github.io/projects/cantonese-podcast.html)**　·　**[→ 源码](https://github.com/Kevinsssss-boop/yu-yue-podcast-research)**
 
 **用 374 档节目、46,721 集单集和 1.36 万条播放数据，描绘一个没人系统研究过的内容生态。**
 
