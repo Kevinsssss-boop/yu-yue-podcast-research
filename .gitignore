@@ -1,0 +1,23 @@
+# Python
+__pycache__/
+*.py[cod]
+.venv/
+venv/
+
+# 系统文件
+.DS_Store
+Thumbs.db
+desktop.ini
+
+# 编辑器
+.vscode/
+.idea/
+
+# 原始数据（体积大，且含他人内容，不纳入版本控制）
+01-原始数据/
+02-清洗后数据/单集表_粤语.csv
+06-听众侧/原始导出/
+
+# Office 临时文件
+~$*
+*.tmp
