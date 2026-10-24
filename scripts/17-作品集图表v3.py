@@ -574,46 +574,47 @@ def main():
 
     # 麦克风剪影遮罩：白底 → 画黑色形状 → 黑色区域才允许填词
     # （「粵」字笔画太密，填满后看不出字形，所以改用图形）
-    # 画布用竖版，让麦克风撑满，不留大片空白
-    S_W, S_H = 1180, 1480
+    # 头戴式耳机剪影：头梁 + 两侧连接杆 + 左右耳罩
+    S_W, S_H = 1600, 1300
     mask_img = Image.new('L', (S_W, S_H), 255)
     d = ImageDraw.Draw(mask_img)
     cx = S_W // 2
-    # 话筒头（竖长胶囊）
-    d.rounded_rectangle([cx - 245, 55, cx + 245, 790], radius=245, fill=0)
-    # 托架（半圆环）
-    d.arc([cx - 415, 380, cx + 415, 1105], start=0, end=180, fill=0, width=88)
-    # 立杆
-    d.rectangle([cx - 42, 1085, cx + 42, 1285], fill=0)
-    # 底座
-    d.rounded_rectangle([cx - 315, 1285, cx + 315, 1395], radius=52, fill=0)
+    # 头梁（上半圆环）：加粗到 158，否则只有小字塞得进去
+    d.arc([cx - 540, 130, cx + 540, 910], start=180, end=360, fill=0, width=158)
+    # 两侧连接杆
+    d.rectangle([cx - 620, 450, cx - 455, 800], fill=0)
+    d.rectangle([cx + 455, 450, cx + 620, 800], fill=0)
+    # 左右耳罩
+    d.rounded_rectangle([cx - 700, 690, cx - 410, 1225], radius=145, fill=0)
+    d.rounded_rectangle([cx + 410, 690, cx + 700, 1225], radius=145, fill=0)
     mask = np.array(mask_img)
 
-    VIVID = ['#FF6B6B', '#4ECDC4', '#FFE66D', '#F7FFF7',
-             '#A8E6CF', '#FFD3B6', '#95E1D3', '#F38181', '#AA96DA']
+    # 白底上的配色：要压得住，不能太浅
+    WC_COLORS = ['#1B3A5C', '#2E86AB', '#2A9D8F', '#E76F51',
+                 '#F4A261', '#6A4C93', '#3D5A80', '#C73E1D']
 
     def color_func(word, font_size, position, orientation, random_state=None, **kw):
-        return random.choice(VIVID)
+        return random.choice(WC_COLORS)
 
-    wc = WordCloud(font_path=FONT, mask=mask, background_color='#0B1A2B',
-                   max_words=170, prefer_horizontal=0.84,
-                   relative_scaling=0.34, min_font_size=10,
-                   max_font_size=230, collocations=False,
+    wc = WordCloud(font_path=FONT, mask=mask, background_color='white',
+                   max_words=180, prefer_horizontal=0.86,
+                   relative_scaling=0.32, min_font_size=10,
+                   max_font_size=210, collocations=False,
                    color_func=color_func, contour_width=0,
                    margin=3).generate_from_frequencies(freq)
 
-    fig, ax = plt.subplots(figsize=(6.6, 8.3))
+    fig, ax = plt.subplots(figsize=(8.0, 6.5))
     ax.imshow(wc, interpolation='bilinear')
     ax.axis('off')
-    fig.text(0.5, 0.962, '粤语播客在讲什么', ha='center', fontsize=19,
-             fontweight='bold', color='#F7FFF7')
-    fig.text(0.5, 0.035, '46,721 条单集标题的词频', ha='center', fontsize=9.5,
-             color='#8FA6BA')
-    fig.patch.set_facecolor('#0B1A2B')
-    ax.set_facecolor('#0B1A2B')
-    fig.subplots_adjust(left=0.01, right=0.99, bottom=0.055, top=0.945)
+    fig.text(0.5, 0.955, '粤语播客在讲什么', ha='center', fontsize=19,
+             fontweight='bold', color=C['ink'])
+    fig.text(0.5, 0.038, '46,721 条单集标题的词频', ha='center', fontsize=9.5,
+             color=C['grey'])
+    fig.patch.set_facecolor('white')
+    ax.set_facecolor('white')
+    fig.subplots_adjust(left=0.02, right=0.98, bottom=0.06, top=0.93)
     fig.savefig(os.path.join(OUT, '12-词云.png'), dpi=200,
-                facecolor='#0B1A2B', bbox_inches='tight', pad_inches=0.3)
+                facecolor='white', bbox_inches='tight', pad_inches=0.3)
     plt.close(fig)
     print('  ✓ 12-词云.png')
 
@@ -696,11 +697,13 @@ def main():
     ax.spines['polar'].set_color('#DDE3E8')
     fig.legend(loc='lower center', bbox_to_anchor=(0.5, 0.02), ncol=5,
                frameon=False, fontsize=9.5)
-    fig.text(0.5, 0.935, '五大形态的画像对比', ha='center', fontsize=15,
+    # top 必须留够：极坐标的顶部轴标题（「平均时长」）会伸到绘图区上方，
+    # 之前 top=0.86 时正好被副标题压住
+    fig.text(0.5, 0.962, '五大形态的画像对比', ha='center', fontsize=15,
              fontweight='bold', color=C['ink'])
-    fig.text(0.5, 0.900, '四个维度各自归一化后横向比较，绝对值见正文第四章',
+    fig.text(0.5, 0.918, '四个维度各自归一化后横向比较，绝对值见正文第四章',
              ha='center', fontsize=9, color=C['grey'])
-    fig.subplots_adjust(left=0.12, right=0.88, bottom=0.14, top=0.86)
+    fig.subplots_adjust(left=0.12, right=0.88, bottom=0.14, top=0.80)
     save(fig, '14-形态雷达.png')
 
     # ══════════════════════════════════════════════
@@ -709,7 +712,8 @@ def main():
     order15 = sorted([t for t in plays if len(plays[t]) >= 20],
                      key=lambda t: -statistics.median(plays[t]))
     fig, ax = plt.subplots(figsize=(8.4, 4.8))
-    data = [[min(v, 80000) for v in plays[t]] for t in order15]
+    # 只保留正数，直接用对数轴；symlog 会同时画负次幂刻度，标签必然重叠
+    data = [[min(v, 80000) for v in plays[t] if v > 0] for t in order15]
     bp = ax.boxplot(data, patch_artist=True, widths=0.62, showfliers=False,
                     medianprops=dict(color=C['ink'], linewidth=2.4),
                     whiskerprops=dict(color='#B0BAC4'),
@@ -721,8 +725,12 @@ def main():
         b.set_linewidth(1.4)
     ax.set_xticks(range(1, len(order15) + 1))
     ax.set_xticklabels(order15, rotation=22, ha='right', rotation_mode='anchor')
-    ax.set_ylabel('单集播放量（截到 8 万）', labelpad=8)
-    ax.set_yscale('symlog', linthresh=1000)
+    ax.set_ylabel('单集播放量（对数轴，截到 8 万）', labelpad=8)
+    ax.set_yscale('log')
+    ax.set_yticks([10, 100, 1000, 10000])
+    ax.set_yticklabels(['10', '100', '1 千', '1 万'])
+    ax.set_ylim(3, 150000)
+    ax.minorticks_off()
     ax.grid(axis='y', alpha=0.15)
     ax.set_axisbelow(True)
     bare(ax)
