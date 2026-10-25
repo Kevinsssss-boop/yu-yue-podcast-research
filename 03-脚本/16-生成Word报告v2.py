@@ -33,7 +33,7 @@ from docx.oxml import OxmlElement
 
 HERE = os.path.dirname(os.path.abspath(__file__))
 ROOT = os.path.join(HERE, '..')
-FIG  = os.path.join(ROOT, '04-图表', 'v2')
+FIG  = os.path.join(ROOT, '04-图表', 'v3')
 OUT  = os.path.join(ROOT, '粤语播客生态研究报告.docx')
 
 TXT   = 12      # 正文 小四
